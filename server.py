@@ -13,9 +13,12 @@ clients = {}
 
 def connectionLoop(sock):
    while True:
+      #Data from Sockets returns in a tuple
       data, addr = sock.recvfrom(1024)
       data = str(data)
+      #A conditional for each loop
       if addr in clients:
+         #checks for heartbeat command from Client
          if 'heartbeat' in data:
             clients[addr]['lastBeat'] = datetime.now()
       else:
@@ -23,7 +26,7 @@ def connectionLoop(sock):
             clients[addr] = {}
             clients[addr]['lastBeat'] = datetime.now()
             clients[addr]['color'] = 0
-            message = {"cmd": 0,"player":{"id":str(addr)}, "clients" : str(clients)}
+            message = {"cmd": 0,"player":{"id":str(addr)}, "clients" : [str(clients)]}
             m = json.dumps(message)
             for c in clients:
                sock.sendto(bytes(m,'utf8'), (c[0],c[1]))
