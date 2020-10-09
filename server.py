@@ -19,6 +19,8 @@ connected = 0
 # a dictionary that will store our clients indexed by their (IP, PORT)
 clients = {}
 
+jsonData = {}
+
 ########################
 """ METHODS """
 ########################
@@ -34,12 +36,14 @@ def connectionLoop(sock):
         # Listen to the next message
         data, addr = sock.recvfrom(1024)
         data = str(data)
-        print("Got this: " + data)
+        print("Got this: " + data.replace('b', '').replace("'",""))
         # if addr (i.e IP,PORT) exists in clients dictionary
         if addr in clients:
             # update the heartbeat value if data dictionary has a key called 'heartbeat'
-            if 'heartbeat' in data:
+            if 'X' in data:
+                jsonData = json.loads(data.replace('b', '').replace("'",""))
                 clients[addr]['lastBeat'] = datetime.now()
+                clients[addr]['position'] = jsonData
         else:
             # if there is a key called 'connect' in data dictionary
             if 'connect' in data:
@@ -49,6 +53,8 @@ def connectionLoop(sock):
                 clients[addr]['lastBeat'] = datetime.now()
                 # add a field called color
                 clients[addr]['color'] = 0
+                # add field called position
+                clients[addr]['position'] = {"X": 0, "Y": 0, "Z": 0}
                 # create a message object with a command value and an array of player objects
                 message = {"cmd": 0, "players": []}  # {"id":addr}}
 
@@ -58,6 +64,8 @@ def connectionLoop(sock):
                 p['id'] = str(addr)
                 # create a field called color
                 p['color'] = 0
+                # create a field called position
+                p['position'] = {"X": 0, "Y": 0, "Z": 0}
                 # add the object to the player array
                 message['players'].append(p)
 
@@ -153,6 +161,7 @@ def gameLoop(sock):
             # fill the player details
             player['id'] = str(c)
             player['color'] = clients[c]['color']
+            player['position'] = clients[c]['position']
             GameState['players'].append(player)
         s = json.dumps(GameState, separators=(",", ":"))
         #      print(s)
