@@ -52,7 +52,7 @@ def connectionLoop(sock):
                 # update the last beat of the client object
                 clients[addr]['lastBeat'] = datetime.now()
                 # add a field called color
-                clients[addr]['color'] = 0
+                # clients[addr]['color'] = 0
                 # add field called position
                 clients[addr]['position'] = {"X": 0, "Y": 0, "Z": 0}
                 # create a message object with a command value and an array of player objects
@@ -63,7 +63,7 @@ def connectionLoop(sock):
                 # add a field called 'id' that is the string version of (IP, PORT)
                 p['id'] = str(addr)
                 # create a field called color
-                p['color'] = 0
+                # p['color'] = 0
                 # create a field called position
                 p['position'] = {"X": 0, "Y": 0, "Z": 0}
                 # add the object to the player array
@@ -89,7 +89,7 @@ def connectionLoop(sock):
                     # set the id to the current key
                     player['id'] = str(c)
                     # set the color to the key's properties
-                    player['color'] = clients[c]['color']
+                    # player['color'] = clients[c]['color']
                     # add it to the game state
                     GameState['players'].append(player)
                     # send the message object containg the new connected client to the previously connected clients
@@ -153,14 +153,14 @@ def gameLoop(sock):
             # create a player object
             player = {}
             # assign a random color
-            clients[c]['color'] = {
-                "R": random.random(),
-                "G": random.random(),
-                "B": random.random()
-            }
+            # clients[c]['color'] = {
+            #    "R": random.random(),
+            #    "G": random.random(),
+            #    "B": random.random()
+            # }
             # fill the player details
             player['id'] = str(c)
-            player['color'] = clients[c]['color']
+            #player['color'] = clients[c]['color']
             player['position'] = clients[c]['position']
             GameState['players'].append(player)
         s = json.dumps(GameState, separators=(",", ":"))
